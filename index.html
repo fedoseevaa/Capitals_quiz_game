@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Capitals Quiz — a little geography game by Aleksandra Fedoseeva" />
+  <title>Capitals Quiz — Aleksandra Fedoseeva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <header class="g-nav">
+    <a href="https://fedoseevaa.github.io/#game" class="g-nav__back" id="back-link">← Back to portfolio</a>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button data-lang="en" class="lang-switch__btn is-active">EN</button>
+      <button data-lang="ru" class="lang-switch__btn">RU</button>
+    </div>
+  </header>
+
+  <main class="g-main">
+    <div class="g-card">
+      <div class="g-head">
+        <h1 class="g-title" id="game-title">Capitals Quiz</h1>
+        <p class="g-subtitle" id="game-subtitle">Pick the correct capital out of four.</p>
+      </div>
+
+      <!-- QUIZ -->
+      <section id="quiz" class="quiz">
+        <div class="quiz__bar">
+          <span class="quiz__counter" id="counter">Question 1 of 10</span>
+          <span class="quiz__score">
+            <span id="score-label">Score</span>: <strong id="score-value">0</strong>
+          </span>
+        </div>
+        <div class="progress"><div class="progress__bar" id="progress-bar"></div></div>
+
+        <p class="quiz__prompt" id="prompt"></p>
+
+        <div class="options" id="options"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="btn btn--primary next-btn" id="next-btn" type="button" hidden>Next</button>
+      </section>
+
+      <!-- RESULT -->
+      <section id="result" class="result" hidden>
+        <div class="result__emoji" aria-hidden="true">🏆</div>
+        <h2 class="result__title" id="result-title">Round complete!</h2>
+        <p class="result__score" id="result-score"></p>
+        <p class="result__msg" id="result-msg"></p>
+        <div class="result__actions">
+          <button class="btn btn--primary" id="play-again" type="button">Play again</button>
+          <a class="btn btn--ghost" href="https://fedoseevaa.github.io/#game" id="result-back">Back to portfolio</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="game.js"></script>
+  <script src="sparkles.js"></script>
+</body>
+</html>
