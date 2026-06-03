@@ -91,7 +91,7 @@ const COUNTRIES = [
   { en: { c: "Tajikistan", cap: "Dushanbe" }, ru: { c: "Таджикистан", cap: "Душанбе" } },
   { en: { c: "Thailand", cap: "Bangkok" }, ru: { c: "Таиланд", cap: "Бангкок" } },
   { en: { c: "Turkey", cap: "Ankara" }, ru: { c: "Турция", cap: "Анкара" } },
-  { en: { c: "Turkmenistan", cap: "Ashgabat" }, ru: { c: "Туркмения", cap: "Ашхабад" } },
+  { en: { c: "Turkmenistan", cap: "Ashgabat" }, ru: { c: "Туркменистан", cap: "Ашхабад" } },
   { en: { c: "United Arab Emirates", cap: "Abu Dhabi" }, ru: { c: "ОАЭ", cap: "Абу-Даби" } },
   { en: { c: "Uzbekistan", cap: "Tashkent" }, ru: { c: "Узбекистан", cap: "Ташкент" } },
   { en: { c: "Vietnam", cap: "Hanoi" }, ru: { c: "Вьетнам", cap: "Ханой" } },
@@ -217,7 +217,8 @@ const I18N = {
     score: "Score",
     prompt: (country) => `What is the capital of <strong>${country}</strong>?`,
     correct: "Correct! 🎉",
-    wrong: (capital) => `Not quite — it's <strong>${capital}</strong>.`,
+    wrong: (chosenCity, chosenCountry, correctCap) =>
+      `Not quite — <strong>${chosenCity}</strong> is the capital of ${chosenCountry}. The right answer is <strong>${correctCap}</strong>.`,
     next: "Next",
     finish: "See result",
     resultTitle: "Round complete!",
@@ -239,7 +240,8 @@ const I18N = {
     score: "Счёт",
     prompt: (country) => `Какая столица страны <strong>${country}</strong>?`,
     correct: "Верно! 🎉",
-    wrong: (capital) => `Почти — правильный ответ <strong>${capital}</strong>.`,
+    wrong: (chosenCity, chosenCountry, correctCap) =>
+      `Почти — <strong>${chosenCity}</strong> — это столица страны ${chosenCountry}. Правильный ответ — <strong>${correctCap}</strong>.`,
     next: "Дальше",
     finish: "Узнать результат",
     resultTitle: "Раунд завершён!",
@@ -321,11 +323,12 @@ function renderQuestion() {
   $("#score-value").textContent = score;
   $("#prompt").innerHTML = t().prompt(country.c);
 
-  // Build options: correct + 3 distractors (other capitals), shuffled.
+  // Build options: correct + 3 distractors (other real capitals), shuffled.
+  // Each option keeps its own country so a wrong pick can teach what it's the capital of.
   const distractors = shuffle(COUNTRIES.filter((_, i) => i !== idx))
     .slice(0, OPTIONS_PER_Q - 1)
-    .map(co => co[lang].cap);
-  const options = shuffle([country.cap, ...distractors]);
+    .map(co => ({ cap: co[lang].cap, c: co[lang].c }));
+  const options = shuffle([{ cap: country.cap, c: country.c }, ...distractors]);
 
   const optionsEl = $("#options");
   optionsEl.innerHTML = "";
@@ -333,7 +336,7 @@ function renderQuestion() {
     const btn = document.createElement("button");
     btn.className = "option";
     btn.type = "button";
-    btn.textContent = opt;
+    btn.textContent = opt.cap;
     btn.addEventListener("click", () => onAnswer(btn, opt, country.cap));
     optionsEl.appendChild(btn);
   });
@@ -354,7 +357,7 @@ function onAnswer(btn, chosen, correctCap) {
   });
 
   const fb = $("#feedback");
-  if (chosen === correctCap) {
+  if (chosen.cap === correctCap) {
     score++;
     $("#score-value").textContent = score;
     fb.className = "feedback is-correct";
@@ -362,7 +365,7 @@ function onAnswer(btn, chosen, correctCap) {
   } else {
     btn.classList.add("is-wrong");
     fb.className = "feedback is-wrong";
-    fb.innerHTML = t().wrong(correctCap);
+    fb.innerHTML = t().wrong(chosen.cap, chosen.c, correctCap);
   }
 
   const isLast = current === TOTAL_QUESTIONS - 1;
